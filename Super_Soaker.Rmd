@@ -1,0 +1,81 @@
+---
+title: "Super Soaker"
+author: "Nelson, Yahui"
+date: "2025-09-28"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading Super Soak Train data
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(glmnet)
+library(mice) #package for imputation
+library(VIM) #visualizing missingness
+library(naniar) #visualizing missingness
+library(skimr) #alternative way to view dataset summaries
+library(UpSetR) #visualizing missingness
+library(readr)
+train <- read_csv("train.csv")
+knitr::opts_chunk$set(echo = FALSE)
+```
+Structure and summary
+```{R}
+str(train)
+summary(train)
+skim(train)
+```
+
+## Descriptive analysis of the Super Soaker data
+
+```{r}
+prop.table(table(train$failure))
+```
+
+There are 78.74% of the products pass the quality test, and 21.26% of the products failed the quality test.
+
+### Visuals between failure variable and other variables
+
+```{r}
+train %>%
+  ggplot(aes(x=loading))+
+  geom_histogram(bins = 50,na_rm= TRUE,fill= "BLUE",alpha=0.7)+
+  theme_minimal()+
+  labs(title="Loading in Train Data")
+```
+
+
+
+```{r}
+ggplot(train, aes(x=loading, na.rm= TRUE, fill = failure)) + geom_bar(width = 2) + theme_bw()+
+  labs(title="Product absorption levels and whether the product failed the test")
+```
+
+The Failure rate are higher after 200ML absorption products
+
+
+```{r}
+ggplot(train, aes(x=attribute_0, fill = failure)) + geom_bar(width = 0.5) + theme_bw()+
+  labs(title= "Product material 5 and 7 qulity test results")
+```
+The product uses material_7 are 4 times more than material_5, but the material_5's failure rate are slightly lower than material_7.
+
+
+```{r}
+ggplot(train, aes(x=attribute_1, fill = failure)) + geom_bar(width = 0.5) + theme_bw()+
+  labs(title= "Product material 5,6 and 8 qulity test results")
+```
+Material_5 and material_8 are used more than material_6, but the failure rate are not too much different.
+
+
+```{r}
+ggplot(train, aes(x=product_code, fill = failure)) + geom_bar(width = 0.5) + theme_bw()+
+  labs(title="Product prototype and qulity test result")
+```
+ 
+ Product_code with A through E's failure rate are not too much different.
